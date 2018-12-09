@@ -16,7 +16,7 @@ Find and delete thumbnails & intermediate images from your Media Library
 * 🗑 Delete some or all of WordPress's intermediate images (thumbnails, medium, and large, plus extra ones Plugins/Themes make secretly)
 * 💣 This can clear thousands of unwanted files from your uploads directory
 * 📈 Useful if you've had lots of different theme/plugins over the years, and inadvertently accumulated a vast number of intermediate images that are no longer used by your site
-* 🙅🏼 Deleting is **permanent.** There's no undo.
+* 🙅🏼 Deleting is **permanent.** There's no undo. Be careful!
 * ⚙ You can use [this plugin](http://wordpress.org/plugins/regenerate-thumbnails/) to regenerate your Media Library after (as Wordpress will need the default sizes)
 * 🍺 This was a **re-written plugin**, the bad reviews were correct for the old versions, but not this current version. If you experience any issues, please open a [support request](https://wordpress.org/support/plugin/delete-thumbnails) or [github issue](https://github.com/davidsword/delete-intermediate-images/issues), I'm happy to help fix any issues and help plugin grow.
 * 🙏 Contributors: please do! Looking forward to your [PRs](https://github.com/davidsword/sword-layouts/pulls)!

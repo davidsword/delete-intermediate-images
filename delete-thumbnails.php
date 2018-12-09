@@ -25,12 +25,29 @@ add_action( 'admin_init', function() {
 class Delete_Thumbnails {
 
 	/**
-	 * Class construct
+	 * Will hold WordPress's `basedir` value.
 	 *
-	 * @since 2.0.0
+	 * @var string
+	 */
+	private $dir = '';
+
+	/**
+	 * Will hold WordPress's `baseurl` value.
+	 *
+	 * @var string
+	 */
+	private $url = '';
+
+	/**
+	 * Tiger cats go.
 	 */
 	public function __construct() {
+
+		// setup vars.
 		$this->init();
+
+		// inject into WordPress.
+		$this->hooks();
 	}
 
 	/**
@@ -45,6 +62,7 @@ class Delete_Thumbnails {
 
 		$this->library = $this->get_library();
 
+		// make paths more accessable.
 		$dir       = wp_upload_dir();
 		$this->dir = $dir['basedir'];
 		$this->url = $dir['baseurl'];
