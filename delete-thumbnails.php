@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name:    Delete Thumbnails & Resized Images
+ * Plugin Name:    Delete Thumbnails & Intermediate Images
  * Plugin URI:     https://davidsword.ca/wordpress-plugins/
- * Description:    Find and delete thumbnails & resized images from your Media Library
+ * Description:    Find and delete thumbnails & the other resized images from your Media Library
  * Version:        2.3.0
  * Author:         davidsword
  * Author URI:     https://davidsword.ca/
@@ -15,9 +15,9 @@
 
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
-add_action( 'admin_init', function() {
+//add_action( 'admin_init', function() {
 	new Delete_Thumbnails();
-});
+//});
 
 /**
  * Main and only Class for plugin.
@@ -39,7 +39,7 @@ class Delete_Thumbnails {
 	private $url = '';
 
 	/**
-	 * Undocumented variable
+	 * Will store the list of original URLs from the Media Library.
 	 *
 	 * @var array
 	 */
@@ -122,7 +122,7 @@ class Delete_Thumbnails {
 		$this->menu_id = add_management_page(
 			__( 'Delete Thumbnails', 'dlthumbs' ),
 			__( 'Delete Thumbnails', 'dlthumbs' ),
-			'administrator', // Caps level.
+			'manage_options', // Caps level.
 			'dlthumbs',
 			array( $this, 'interface' )
 		);
