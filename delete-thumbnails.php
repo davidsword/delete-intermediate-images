@@ -39,6 +39,13 @@ class Delete_Thumbnails {
 	private $url = '';
 
 	/**
+	 * Undocumented variable
+	 *
+	 * @var array
+	 */
+	public $library = [];
+
+	/**
 	 * Tiger cats go.
 	 */
 	public function __construct() {
@@ -60,6 +67,7 @@ class Delete_Thumbnails {
 	 */
 	public function init() {
 
+		// Load the library/
 		$this->library = $this->get_library();
 
 		// make paths more accessable.
