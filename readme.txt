@@ -31,12 +31,18 @@ Find and delete thumbnails & intermediate images from your Media Library
 
 == Frequently Asked Questions ==
 
-= What parameters are used to determine if a image is intermediate? =
+= What is a intermediate image? =
+
+This may often be interchanged with "thumbnails" or "resized" images. Intermediate images are images WordPress generates when you upload an original upload. The default sizes of these Intermediate images are in **wp-admin > Settings > Media**. Uploading a single image to WordPress may result in at least 3 new smaller files being created. These images are created because original uploads are often far bigger in pixels and in file size, WordPress will use these smaller images throughout yoursite instead of the big original one.
+
+For example, while browsing the Media Library, you're not viewing the original files, you're viewing the `thumbnail` intermediate image size WordPress created so the page loads as fast as possible.
+
+= What parameters are used to determine if a image is an intermediate image? =
 
 After looking at all files in the WordPress uploads directory, a file is determined as resized when three criteria are meet:
 
-1. It's an image
-1. The file URL is not a main WordPress Media Library file
+1. The file is an image (a jpg, png, gif)
+1. The file URL is not an original upload file from the WordPress Media Library
 1. The filename ends with `-###-###.`
 
 = What is this warning about `chmod` about? =
