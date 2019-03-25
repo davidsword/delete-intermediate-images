@@ -120,22 +120,22 @@ class Delete_Thumbnails {
 	 */
 	public function admin_scripts() {
 		if ( 'tools_page_dlthumbs' === get_current_screen()->base ) {
-			wp_register_style(
+			$version = SCRIPT_DEBUG ? time() : get_plugin_data( __FILE__ )['Version'];
+
+			wp_enqueue_script(
 				'css',
 				plugins_url( 'style.css', __FILE__ ),
 				false,
-				'2.0'
+				$version
 			);
-			wp_enqueue_style( 'css' );
 
-			wp_register_script(
+			wp_enqueue_script(
 				'js',
 				plugins_url( 'dltumbs.js', __FILE__ ),
 				[ 'jquery' ],
-				'2.0',
+				$version,
 				true
 			);
-			wp_enqueue_script( 'js' );
 		}
 	}
 
