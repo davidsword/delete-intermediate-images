@@ -77,6 +77,7 @@ You must backup your files as this plugin DELETES files permanently, you can ign
 * changed version numbering logic
 * improved security
 * linted all code to WPCS
+* using `scandir()` instead of `readdir( opendir() )`
 
 = 2.2 =
 * July 6, 2017

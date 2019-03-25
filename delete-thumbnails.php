@@ -82,10 +82,10 @@ class Delete_Thumbnails {
 	public function hooks() {
 
 		// Add in our JS resources.
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts' ] );
 
 		// Add in our custom menu page.
-		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+		add_action( 'admin_menu', [ $this, 'add_admin_menu' ] );
 	}
 
 	/**
@@ -120,11 +120,11 @@ class Delete_Thumbnails {
 	 */
 	public function add_admin_menu() {
 		$this->menu_id = add_management_page(
-			__( 'Delete Thumbnails', 'dlthumbs' ),
-			__( 'Delete Thumbnails', 'dlthumbs' ),
+			esc_html__( 'Delete Thumbnails', 'dlthumbs' ),
+			esc_html__( 'Delete Thumbnails', 'dlthumbs' ),
 			'manage_options', // Caps level.
 			'dlthumbs',
-			array( $this, 'interface' )
+			[ $this, 'interface' ]
 		);
 	}
 
@@ -146,7 +146,7 @@ class Delete_Thumbnails {
 			wp_register_script(
 				'js',
 				plugins_url( 'dltumbs.js', __FILE__ ),
-				array( 'jquery' ),
+				[ 'jquery' ],
 				'2.0',
 				true
 			);
@@ -173,7 +173,7 @@ class Delete_Thumbnails {
 	public function interface() {
 		?>
 		<div class='wrap' id='dlthumbs'>
-			<h2><?php _e( 'Delete Resized Images', 'dlthumbs' ); ?></h2>
+			<h2><?php esc_html_e( 'Delete Resized Images', 'dlthumbs' ); ?></h2>
 
 			<?php
 			// Load files in media upload dir.
@@ -185,7 +185,8 @@ class Delete_Thumbnails {
 			if ( ! $writable ) :
 				?>
 				<div class='notice notice-error'><p>
-					<?php _e( 'This plugin requires Your upload directory CHMOD to be at least <code>755</code> so PHP can edit it. The deletion of files will most likely not work. Please contact your host or website provider for assistance. Mention your CHMOD is currently set to:', 'dlthumbs' ); ?> <code><?php echo $writable; ?></code>
+					<?php
+					sprintf( esc_html_e( 'This plugin requires Your upload directory %s to be at least %s so PHP can edit it. The deletion of files will most likely not work. Please contact your host or website provider for assistance. Mention your %s is currently set to', 'dlthumbs' ), 'CHMOD', '<code>755</code>', 'CHMOD'); ?>: <code><?php echo $writable; ?></code>
 				</p></div>
 				<?php
 			endif;
@@ -207,7 +208,7 @@ class Delete_Thumbnails {
 	 * @return clean path
 	 */
 	public function verify_and_sanatize_path( $path ) {
-		$path_no_funny_business = str_replace( [ '../', '/.' ], '', $path );
+		$path_no_funny_business = str_replace( [ '../', '..', '/.' ], '', $path );
 		// Eliminate any symbolic links or dot-dot'ery.
 		$realpath = realpath( $path_no_funny_business );
 		// Make sure we're in the uploads directory.
@@ -233,7 +234,7 @@ class Delete_Thumbnails {
 			if ( check_admin_referer( 'submit' ) ) {
 				$not_deleted   = [];
 				$deleted       = [];
-				$filestodelete = json_decode( str_replace( '\"', '"', $_POST['list'] ) );
+				$filestodelete = json_decode( str_replace( '\"', '"', $_POST['list'] ) ); // this value will be sanitized later.
 
 				foreach ( $filestodelete as $deleteme ) {
 					$delete_file = verify_and_sanatize_path( $this->dir . $deleteme );
@@ -242,25 +243,25 @@ class Delete_Thumbnails {
 						if ( unlink( $delete_file ) ) { // yeah unlink.
 							$deleted[] = $delete_file;
 						} else {
-							$not_deleted[] = $deleteme . ' (could not delete)';
+							$not_deleted[] = $deleteme . ' (' . esc_html__( 'could not delete', 'dlthumbs' ) . ')';
 						}
 					} else {
-						$not_deleted[] = $deleteme . ' (could not verify path)';
+						$not_deleted[] = $deleteme . ' (' . esc_html__( 'could not verify path', 'dlthumbs' ) .')';
 					}
 				}
 				if ( count( $deleted ) > 0 ) {
 					$error_class = 'notice-success is-dismissible';
 					$error_text  = count( $deleted );
-					$error_text .= _e( 'files successfully deleted.', 'dlthumbs' ); // @TODO change to print_f format
+					$error_text .= esc_html_e( 'files successfully deleted.', 'dlthumbs' ); // @TODO change to print_f format
 				}
 				if ( count( $not_deleted ) > 0 ) {
 					$error_class = 'notice-error';
-					$error_text  = _e( 'Yikes, files were marked to-delete but PHP was unable to delete them.', 'dlthumbs' ); // @TODO change to print_f format
+					$error_text  = esc_html_e( 'Yikes, files were marked to-delete but PHP was unable to delete them.', 'dlthumbs' ); // @TODO change to print_f format
 					$error_text .= count( $not_deleted ) . implode( '<br /> - ', $not_deleted );
 				}
 			} else {
 				$error_class = 'notice-error';
-				$error_text  = _e( 'Something went wrong with the', 'dlthumbs' );
+				$error_text  = esc_html_e( 'Something went wrong with the', 'dlthumbs' );
 				$error_text .= '<code>wp_nonce_field()</code>.';
 			}
 			?>
@@ -280,13 +281,13 @@ class Delete_Thumbnails {
 		?>
 		<div class="notice notice-<?php echo ( 0 === $this->files_count ) ? 'error' : 'info'; ?>">
 			<p>
-				<?php _e( 'Browsing', 'dlthumbs' ); ?>:
+				<?php esc_html_e( 'Browsing', 'dlthumbs' ); ?>:
 				<code>/<?php echo str_replace( get_home_path(), '', $this->dir ); ?>/</code>
 				<?php echo $this->files_count; ?>
-				<?php _e( 'files were found', 'dlthumbs' ); ?>
+				<?php esc_html_e( 'files were found', 'dlthumbs' ); ?>
 				<?php if ( $this->files_count > 0 ) { ?>
 					, <span class='total_thumbnail_count'></span>
-					<?php _e( 'images detected as resized images', 'dlthumbs' ); ?>.
+					<?php esc_html_e( 'images detected as resized images', 'dlthumbs' ); ?>.
 				<?php } ?>
 			</p>
 		</div>
@@ -298,10 +299,10 @@ class Delete_Thumbnails {
 						<input type='checkbox' name='selectall' title='Select All' />
 					</th>
 					<th>
-						<?php _e( 'Preview', 'dlthumbs' ); ?>
+						<?php esc_html_e( 'Preview', 'dlthumbs' ); ?>
 					</th>
 					<th>
-						<?php _e( 'File', 'dlthumbs' ); ?>
+						<?php esc_html_e( 'File', 'dlthumbs' ); ?>
 					</th>
 				</tr>
 			</thead>
@@ -335,7 +336,7 @@ class Delete_Thumbnails {
 					?>
 					<tr>
 						<td colspan=3>
-							<p id='wtfnofiles'><?php _e( 'No resized images found in', 'dlthumbs' ); ?>:<br />
+							<p id='wtfnofiles'><?php esc_html_e( 'No resized images found in', 'dlthumbs' ); ?>:<br />
 							<code><?php echo $this->dir; ?></code>
 							</p>
 						</td>
@@ -361,23 +362,23 @@ class Delete_Thumbnails {
 			<p>
 				<label>
 					<input class='nag' value='' type='checkbox' name='nag1' />
-					<?php _e( 'I understand that pressing the button below will delete the above selected files', 'dlthumbs' ); ?>.
+					<?php esc_html_e( 'I understand that pressing the button below will delete the above selected files', 'dlthumbs' ); ?>.
 				</label>
 				<br />
 				<label>
 					<input class='nag' value='' type='checkbox' name='nag2' />
-					<?php _e( 'I have backed up the uploads directory before doing this', 'dlthumbs' ); ?> (<code>/<?php echo str_replace( get_home_path(), '', $this->dir ); ?>/</code>).
+					<?php esc_html_e( 'I have backed up the uploads directory before doing this', 'dlthumbs' ); ?> (<code>/<?php echo str_replace( get_home_path(), '', $this->dir ); ?>/</code>).
 				</label>
 				<br />
 				<label>
 					<input class='nag' value='' type='checkbox' name='nag3' />
-					<?php _e( 'I understand this action can not be undone', 'dlthumbs' ); ?>.</label><br />
+					<?php esc_html_e( 'I understand this action can not be undone', 'dlthumbs' ); ?>.</label><br />
 			</p>
-			<input type='submit' class='button-primary button-large button' value='<?php _e( 'DELETE RESIZED IMAGES', 'dlthumbs' ); ?> &raquo;' disabled>
+			<input type='submit' class='button-primary button-large button' value='<?php esc_html_e( 'DELETE RESIZED IMAGES', 'dlthumbs' ); ?> &raquo;' disabled>
 			<?php } ?>
 		</form>
 
-		<p id='streetcred'><?php _e( 'Plugin By', 'dlthumbs' ); ?> <a href='https://davidsword.ca/' target='_Blank'>David Sword</a></p>
+		<p id='streetcred'><?php esc_html_e( 'Plugin By', 'dlthumbs' ); ?> <a href='https://davidsword.ca/' target='_Blank'>David Sword</a></p>
 		<?php
 	}
 
@@ -390,44 +391,34 @@ class Delete_Thumbnails {
 	 * @since 2.0
 	 *
 	 * @param string  $folder folder to retrive files from.
-	 * @param boolean $godeep true to look deeper than current dir, false if /.
 	 * @return array of files.
 	 */
-	public function get_files_from_folder( $folder, $godeep = true ) {
+	public function get_files_from_folder( $folder ) {
 
 		$files = [];
 
-		// start read.
-		if ( is_dir( $folder ) ) {
-			$dh       = opendir( $folder );
-			$filename = readdir( $dh );
-			while ( false !== $filename ) {
-				if ( ! in_array( $filename, $this->the_naughty_list(), true ) ) {
+		$files = scandir( $folder );
+		if ( false === $files) {
+			return "ERROR running scandir on {$folder}`";
+		}
 
-					// it's a dir, index contents w/ current function.
-					if ( $this->check_if_dir( $filename ) ) {
-						// repeat same function, find files within folders.
-						$subfiles = $this->get_files_from_folder( $this->fixslash( $folder . '/' . $filename . '/' ), false );
-						foreach ( $subfiles as $subfile ) {
-							$files[] = $subfile;
-						}
-					} else {
-						// it's a file.
-						$files[] = $this->fixslash( $folder . '/' . $filename );
-					}
+		foreach ( $files as $filename ) {
+			if ( in_array( $filename, [ '.DS_Store', '.', '..', '' ], true ) ) {
+				continue; // common, get outta here.
+			}
+
+			// For directories, lets repeat ourselves, find files within folders. Inception style.
+			$maybe_dir = $this->fixslash( $folder . '/' . $filename . '/' );
+			if ( is_dir( $maybe_dir ) ) {
+				$subfiles = $this->get_files_from_folder( $maybe_dir );
+				if ( is_array( $subfiles ) && count( $subfiles ) > 0 ) {
+					$files = array_merge( $files, $subfiles );
 				}
+			} else { // it's a file!
+				$files[] = $this->fixslash( $folder . '/' . $filename );
 			}
 		}
 		return $files;
-	}
-
-	/**
-	 * List of files that are kinda files but not really files.
-	 *
-	 * @return array of files that are kinda files but not really files.
-	 */
-	public function the_naughty_list() {
-		return array( '.DS_Store', '.', '..', '' );
 	}
 
 	/**
@@ -458,25 +449,10 @@ class Delete_Thumbnails {
 	}
 
 	/**
-	 * Check if item is a dir or file
-	 *
-	 * Find out if the current item in dir is another dir a hidden file, or an actual file.
-	 *
-	 * @since 2.0.0
-	 * @param string $filename the file name to check if it's a directory or not.
-	 * @return boolean true if is, false if now
-	 */
-	public function check_if_dir( $filename ) {
-		$pos = strpos( $filename, '.' );
-		if ( false === $pos ) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
 	 * Helper, replace double slash.
+	 *
+	 * This shouldn't happen, but it does.
+	 * Until I clean up the cause, I'll clean up the symptom.
 	 *
 	 * @since 2.0.0
 	 *
