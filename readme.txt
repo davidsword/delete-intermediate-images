@@ -3,10 +3,12 @@ Contributors:      davidsword
 Donate link:       http://davidsword.ca/🍺/
 Tags:              delete, thumbnails, media, images, library, resized, delete sizes, image sizes, remove images, clean uploads, clean file sizes
 Requires at least: 4.0.0
-Tested up to:      5.0.0
+Tested up to:      5.1.1
 Stable tag:        2.3.0
 
-Find and delete thumbnails & intermediate images from your Media Library
+Find and delete thumbnails & intermediate images from your Media Library.
+
+https://davidsword.ca/projects/delete-thumbnails/
 
 
 == Description ==
@@ -19,7 +21,7 @@ Find and delete thumbnails & intermediate images from your Media Library
 * 🙅🏼 Deleting is **permanent.** There's no undo. Be careful!
 * ⚙ You can use [this plugin](http://wordpress.org/plugins/regenerate-thumbnails/) to regenerate your Media Library after (as Wordpress will need the default sizes)
 * 🍺 This was a **re-written plugin**, the bad reviews were correct for the old versions, but not this current version. If you experience any issues, please open a [support request](https://wordpress.org/support/plugin/delete-thumbnails) or [github issue](https://github.com/davidsword/delete-intermediate-images/issues), I'm happy to help fix any issues and help plugin grow.
-* 🙏 Contributors: please do! Looking forward to your [PRs](https://github.com/davidsword/sword-layouts/pulls)!
+* 🙏 Contributors: please do! Looking forward to your [PRs](https://github.com/davidsword/delete-intermediate-images/pulls)!
 
 
 == Installation ==
@@ -70,7 +72,7 @@ You must backup your files as this plugin DELETES files permanently, you can ign
 == Changelog ==
 
 = 2.3.0 =
-* Dec 9, 2018
+* April, 2019
 * readme changes (capital P dangit!)
 * added `if !defined ABSPATH` security
 * changed `init` and class firing
