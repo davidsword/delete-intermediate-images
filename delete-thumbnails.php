@@ -93,6 +93,8 @@ class Delete_Thumbnails {
 	 *
 	 * @TODO this all needs to be cached.
 	 * @TODO this only needs to be run on the options page.
+	 * @TODO this should be in it's own class
+	 * @TODO should pageinate
 	 *
 	 * @return array of URLs of current media items.
 	 */
