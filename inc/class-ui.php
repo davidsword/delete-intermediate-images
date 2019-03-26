@@ -1,4 +1,5 @@
 <?php
+// @TODO this file is too long. split up.
 
 defined( 'ABSPATH' ) || exit;
 
@@ -6,9 +7,37 @@ defined( 'ABSPATH' ) || exit;
  * @TODO wire this all up & complete.
  */
 class DL_UI {
-	public function __construct() {
 
+	/**
+	 * Will store the list of original URLs from the Media Library.
+	 *
+	 * @var array
+	 */
+	public $library = [];
+
+	/**
+	 *
+	 */
+	public function __construct() {
+		$this->init();
 	}
+
+	/**
+	 * Initialize.
+	 */
+	public function init() {
+		$this->library = DL_Library::get();
+		$this->hook();
+	}
+
+	/**
+	 * Hook into WordPress.
+	 */
+	public function hook() {
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts'  ] );
+		add_action( 'admin_menu',            [ $this, 'add_admin_menu' ] );
+	}
+
 
     /**
 	 * Add Menu Page
@@ -170,6 +199,30 @@ class DL_UI {
 
 		<p id='streetcred'><?php esc_html_e( 'Plugin By', 'dlthumbs' ); ?> <a href='https://davidsword.ca/' target='_Blank'>David Sword</a></p>
 		<?php
+	}
+
+	/**
+	 * Add Resources
+	 */
+	public function admin_scripts() {
+		if ( 'tools_page_dlthumbs' === get_current_screen()->base ) {
+			$version = SCRIPT_DEBUG ? time() : get_plugin_data( __FILE__ )['Version'];
+
+			wp_enqueue_script(
+				'css',
+				plugins_url( 'assets/style.css', __FILE__ ),
+				false,
+				$version
+			);
+
+			wp_enqueue_script(
+				'js',
+				plugins_url( 'assets/dltumbs.js', __FILE__ ),
+				[ 'jquery' ],
+				$version,
+				true
+			);
+		}
 	}
 
 }

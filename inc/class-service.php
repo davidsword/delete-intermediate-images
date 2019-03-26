@@ -8,7 +8,9 @@ defined( 'ABSPATH' ) || exit;
  */
 class DL_Service {
 	public function __construct() {
-
+		$dir       = wp_upload_dir();
+		$this->dir = $dir['basedir'];
+		$this->url = $dir['baseurl'];
 	}
 
     /**
