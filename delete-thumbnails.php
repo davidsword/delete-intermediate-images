@@ -38,6 +38,7 @@ class Delete_Thumbnails {
 	 * Tiger cats go!
 	 */
 	public function __construct() {
+		$this->load();
 		$this->hook();
 	}
 
@@ -45,10 +46,8 @@ class Delete_Thumbnails {
 	 * Tiger cats go!
 	 */
 	public function hook() {
-		add_action( 'admin_init', function() {
-			// Fire the user interface.
-			new DL_UI();
-		});
+		// fire up the interface.
+		new DL_UI();
 	}
 
 	/**
@@ -62,10 +61,11 @@ class Delete_Thumbnails {
 		include('inc/class-helpers.php');
 		include('inc/class-service.php');
 		include('inc/class-ui.php');
+		include('inc/class-library.php');
 
 	}
 
 }
 
 // Self load.
-new Delete_Thumbnails();
+//new Delete_Thumbnails();

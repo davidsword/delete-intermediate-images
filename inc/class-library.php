@@ -11,7 +11,7 @@ class DL_Library {
 
 	}
 
-    /**
+	/**
 	 * Get the Media Library
 	 *
 	 * @TODO this all needs to be cached.
@@ -33,7 +33,7 @@ class DL_Library {
 
 		$attachments = get_posts( $args );
 		foreach ( $attachments as $post ) {
-			$library[] = $this->fixslash( wp_get_attachment_url( $post->ID ) );
+			$library[] = DL_Helpers::fixslash( wp_get_attachment_url( $post->ID ) );
 		}
 		return $library;
     }

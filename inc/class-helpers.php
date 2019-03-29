@@ -1,6 +1,5 @@
 <?php
 
-
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -11,14 +10,14 @@ class DL_Helpers {
 
 	}
 
-    /**
+	/**
 	 * Determine if a file is a thumbnail or not
 	 *
 	 * @since 2.0
 	 * @param string $file file to find out if thumbnail or not.
 	 * @return boolean true if really a thumbnail, false if not.
 	 */
-	public function is_thumbnail( $file ) {
+	static function is_thumbnail( $file ) {
 		/*
 		If it's in the media library as a main file, it's defnitantly not a thumbnail
 		It could of been mistaken as one if it's source was a downloaded thumbnail from
@@ -49,17 +48,17 @@ class DL_Helpers {
 	 * @param string $str string to replace double slashes on.
 	 * @return string hopefully without double slashes.
 	 */
-	public function fixslash( $str ) {
+	static function fixslash( $str ) {
 		return str_replace( '//', '/', $str );
-    }
+	}
 
-    /**
+	/**
 	 * Ensure nothing naughty is happening. Clean out any bad behaviour.
 	 *
 	 * @param string $path the path of what should be an image.
 	 * @return clean path
 	 */
-	public function verify_and_sanatize_path( $path ) {
+	static function verify_and_sanatize_path( $path ) {
 		$path_no_funny_business = str_replace( [ '../', '..', '/.' ], '', $path );
 		// Eliminate any symbolic links or dot-dot'ery.
 		$realpath = realpath( $path_no_funny_business );
@@ -70,6 +69,6 @@ class DL_Helpers {
 		} else {
 			return false;
 		}
-    }
+	}
 
 }

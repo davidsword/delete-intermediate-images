@@ -26,7 +26,7 @@ class DL_UI {
 	 * Initialize.
 	 */
 	public function init() {
-		$this->library = DL_Library::get();
+		$library = DL_Library::get();
 		$this->hook();
 	}
 
@@ -34,7 +34,6 @@ class DL_UI {
 	 * Hook into WordPress.
 	 */
 	public function hook() {
-		add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts'  ] );
 		add_action( 'admin_menu',            [ $this, 'add_admin_menu' ] );
 	}
 
@@ -45,13 +44,16 @@ class DL_UI {
 	 * @since 2.0
 	 */
 	public function add_admin_menu() {
-		$this->menu_id = add_management_page(
+
+		$page_hook_suffix = add_management_page(
 			esc_html__( 'Delete Thumbnails', 'dlthumbs' ),
 			esc_html__( 'Delete Thumbnails', 'dlthumbs' ),
 			'manage_options', // Caps level.
 			'dlthumbs',
 			[ $this, 'interface' ]
 		);
+		add_action( "admin_footer-{$page_hook_suffix}", [ $this, 'admin_scripts' ] );
+
 	}
 
     /**
