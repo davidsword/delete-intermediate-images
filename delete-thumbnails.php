@@ -39,15 +39,18 @@ class Delete_Thumbnails {
 	 */
 	public function __construct() {
 		$this->load();
-		$this->hook();
+		$this->init();
 	}
 
 	/**
 	 * Tiger cats go!
 	 */
-	public function hook() {
+	public function init() {
+		$library = new DL_Library();
+		$service = new DL_Service();
+
 		// fire up the interface.
-		new DL_UI();
+		new DL_UI( $library, $service );
 	}
 
 	/**
@@ -56,16 +59,13 @@ class Delete_Thumbnails {
 	 * @return void
 	 */
 	public function load() {
-
-		include('inc/class-deletor.php');
 		include('inc/class-helpers.php');
 		include('inc/class-service.php');
 		include('inc/class-ui.php');
 		include('inc/class-library.php');
-
 	}
 
 }
 
 // Self load.
-//new Delete_Thumbnails();
+new Delete_Thumbnails();

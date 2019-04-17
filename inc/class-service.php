@@ -7,6 +7,22 @@ defined( 'ABSPATH' ) || exit;
  * @TODO wire this all up & complete.
  */
 class DL_Service {
+
+	/**
+	 *
+	 *
+	 * @var
+	 */
+	public $dir = '';
+
+	/**
+	 *
+	 *
+	 * @var
+	 */
+	public $url = '';
+
+
 	public function __construct() {
 		$dir       = wp_upload_dir();
 		$this->dir = $dir['basedir'];
@@ -21,7 +37,7 @@ class DL_Service {
 	 */
 	public function check_permission( $folder ) {
 		$check = substr( sprintf( '%o', fileperms( $this->dir ) ), -4 );
-		return ( $check >= 755 ) ? true : false;
+		return ( $check >= 755 );
     }
 
 	/**
@@ -50,16 +66,63 @@ class DL_Service {
 			}
 
 			// For directories, lets repeat ourselves, find files within folders. Inception style.
-			$maybe_dir = $this->fixslash( $folder . '/' . $filename . '/' );
+			$maybe_dir = DL_Helpers::fixslash( $folder . '/' . $filename . '/' );
 			if ( is_dir( $maybe_dir ) ) {
 				$subfiles = $this->get_files_from_folder( $maybe_dir );
 				if ( is_array( $subfiles ) && count( $subfiles ) > 0 ) {
 					$files = array_merge( $files, $subfiles );
 				}
 			} else { // it's a file!
-				$files[] = $this->fixslash( $folder . '/' . $filename );
+				$files[] = DL_Helpers::fixslash( $folder . '/' . $filename );
 			}
 		}
 		return $files;
-    }
+	}
+
+	public function delete() {
+		if (
+			isset( $_POST['list'] ) &&
+			! empty( $_POST['list'] ) &&
+			'[]' !== $_POST['list']
+		) {
+			if ( check_admin_referer( 'submit' ) ) { // @TODO no.
+				$not_deleted   = [];
+				$deleted       = [];
+				$filestodelete = json_decode( str_replace( '\"', '"', $_POST['list'] ) ); // this value will be sanitized later.
+
+				foreach ( $filestodelete as $deleteme ) {
+					$delete_file = verify_and_sanatize_path( $this->dir . $deleteme );
+					if ( $delete_file ) {
+						// CYA LATER!
+						if ( unlink( $delete_file ) ) { // yeah unlink.
+							$deleted[] = $delete_file;
+						} else {
+							$not_deleted[] = $deleteme . ' (' . esc_html__( 'could not delete', 'dlthumbs' ) . ')';
+						}
+					} else {
+						$not_deleted[] = $deleteme . ' (' . esc_html__( 'could not verify path', 'dlthumbs' ) .')';
+					}
+				}
+				if ( count( $deleted ) > 0 ) {
+					$error_class = 'notice-success is-dismissible';
+					$error_text  = count( $deleted );
+					$error_text .= esc_html_e( 'files successfully deleted.', 'dlthumbs' ); // @TODO change to print_f format
+				}
+				if ( count( $not_deleted ) > 0 ) {
+					$error_class = 'notice-error';
+					$error_text  = esc_html_e( 'Yikes, files were marked to-delete but PHP was unable to delete them.', 'dlthumbs' ); // @TODO change to print_f format
+					$error_text .= count( $not_deleted ) . implode( '<br /> - ', $not_deleted );
+				}
+			} else {
+				$error_class = 'notice-error';
+				$error_text  = esc_html_e( 'Something went wrong with the', 'dlthumbs' );
+				$error_text .= '<code>wp_nonce_field()</code>.';
+			}
+			?>
+			<div class="notice <?php echo $error_class; ?>">
+				<p><?php echo $error_text; ?></p>
+			</div>
+			<?php
+		}
+	}
 }

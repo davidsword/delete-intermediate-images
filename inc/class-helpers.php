@@ -17,13 +17,13 @@ class DL_Helpers {
 	 * @param string $file file to find out if thumbnail or not.
 	 * @return boolean true if really a thumbnail, false if not.
 	 */
-	static function is_thumbnail( $file ) {
+	static function is_thumbnail( $file, $library ) {
 		/*
 		If it's in the media library as a main file, it's defnitantly not a thumbnail
 		It could of been mistaken as one if it's source was a downloaded thumbnail from
 		Another WordPress blog
 		*/
-		if ( in_array( str_replace( get_home_path(), '', $file ), $this->library, true ) ) {
+		if ( in_array( str_replace( get_home_path(), '', $file ), $library, true ) ) {
 			return false;
 		}
 

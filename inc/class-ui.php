@@ -1,6 +1,7 @@
 <?php
 // @TODO this file is too long. split up.
 
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -17,24 +18,25 @@ class DL_UI {
 
 	/**
 	 *
+	 *
+	 * @var array
 	 */
-	public function __construct() {
-		$this->init();
-	}
+	public $service = [];
 
 	/**
-	 * Initialize.
+	 *
 	 */
-	public function init() {
-		$library = DL_Library::get();
-		$this->hook();
+	public function __construct( $_library, $_service ) {
+		$this->library = $_library;
+		$this->service = $_service;
+		$this->hook_into_wp();
 	}
 
 	/**
 	 * Hook into WordPress.
 	 */
-	public function hook() {
-		add_action( 'admin_menu',            [ $this, 'add_admin_menu' ] );
+	public function hook_into_wp() {
+		add_action( 'admin_menu', [ $this, 'add_admin_menu' ] );
 	}
 
 
@@ -68,11 +70,11 @@ class DL_UI {
 
 			<?php
 			// Load files in media upload dir.
-			$this->files       = $this->get_files_from_folder( $this->dir );
+			$this->files       = $this->service->get_files_from_folder( $this->service->dir );
 			$this->files_count = count( $this->files );
 
 			// Check the dir for permissions.
-			$writable = $this->check_permission( $this->dir );
+			$writable = $this->service->check_permission( $this->service->dir );
 			if ( ! $writable ) :
 				?>
 				<div class='notice notice-error'><p>
@@ -83,7 +85,8 @@ class DL_UI {
 			endif;
 
 			// Form submit, run deletion.
-			$this->dltthumbs_form_submit();
+			// @TODO why is this inline, can't we hook this elsewhere?
+			$this->service->delete();
 
 			// show thumbnails.
 			$this->dltthumbs_list_form();
@@ -103,7 +106,7 @@ class DL_UI {
 		<div class="notice notice-<?php echo ( 0 === $this->files_count ) ? 'error' : 'info'; ?>">
 			<p>
 				<?php esc_html_e( 'Browsing', 'dlthumbs' ); ?>:
-				<code>/<?php echo str_replace( get_home_path(), '', $this->dir ); ?>/</code>
+				<code>/<?php echo str_replace( get_home_path(), '', $this->service->dir ); ?>/</code>
 				<?php echo $this->files_count; ?>
 				<?php esc_html_e( 'files were found', 'dlthumbs' ); ?>
 				<?php if ( $this->files_count > 0 ) { ?>
@@ -131,7 +134,7 @@ class DL_UI {
 				<?php
 				$id = 0;
 				foreach ( $this->files as $afile ) {
-					$is_thumb = $this->is_thumbnail( $afile );
+					$is_thumb = DL_Helpers::is_thumbnail( $afile, $this->library::get() );
 					$file     = $afile;
 					if ( ! $is_thumb ) {
 						continue;
@@ -140,14 +143,14 @@ class DL_UI {
 					?>
 					<tr>
 						<td>
-							&nbsp;<input id='input-<?php echo $id; ?>' type='checkbox' value='<?php echo str_replace( $this->dir, '', $file ); ?>' />
+							&nbsp;<input id='input-<?php echo $id; ?>' type='checkbox' value='<?php echo str_replace( $this->service->dir, '', $file ); ?>' />
 						</td>
 						<td>
-							<a target='_Blank' href='<?php echo $this->fixslash( str_replace( $this->dir, $this->url, $file ) ); ?>'>View »</a>
+							<a target='_Blank' href='<?php echo DL_Helpers::fixslash( str_replace( $this->service->dir, $this->service->url, $file ) ); ?>'>View »</a>
 						</td>
 						<td>
 							<label for='input-<?php echo $id; ?>'>
-								<?php echo str_replace( $this->dir, '', $file ); ?>
+								<?php echo str_replace( $this->service->dir, '', $file ); ?>
 							</label>
 						</td>
 					</tr>
@@ -158,7 +161,7 @@ class DL_UI {
 					<tr>
 						<td colspan=3>
 							<p id='wtfnofiles'><?php esc_html_e( 'No resized images found in', 'dlthumbs' ); ?>:<br />
-							<code><?php echo $this->dir; ?></code>
+							<code><?php echo $this->service->dir; ?></code>
 							</p>
 						</td>
 					</tr>
@@ -188,7 +191,7 @@ class DL_UI {
 				<br />
 				<label>
 					<input class='nag' value='' type='checkbox' name='nag2' />
-					<?php esc_html_e( 'I have backed up the uploads directory before doing this', 'dlthumbs' ); ?> (<code>/<?php echo str_replace( get_home_path(), '', $this->dir ); ?>/</code>).
+					<?php esc_html_e( 'I have backed up the uploads directory before doing this', 'dlthumbs' ); ?> (<code>/<?php echo str_replace( get_home_path(), '', $this->service->dir ); ?>/</code>).
 				</label>
 				<br />
 				<label>
