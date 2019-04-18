@@ -37,6 +37,7 @@ class DL_UI {
 	 */
 	public function hook_into_wp() {
 		add_action( 'admin_menu', [ $this, 'add_admin_menu' ] );
+		add_action( 'admin_footer', [ $this, 'admin_scripts' ] );
 	}
 
 
@@ -108,15 +109,15 @@ class DL_UI {
 				<?php esc_html_e( 'Browsing', 'dlthumbs' ); ?>:
 				<code>/<?php echo str_replace( get_home_path(), '', $this->service->dir ); ?>/</code>
 				<?php echo $this->files_count; ?>
-				<?php esc_html_e( 'files were found', 'dlthumbs' ); ?>
+				<?php esc_html_e( 'files were found', 'dlthumbs' ); ?>.
 				<?php if ( $this->files_count > 0 ) { ?>
-					, <span class='total_thumbnail_count'></span>
-					<?php esc_html_e( 'images detected as resized images', 'dlthumbs' ); ?>.
+					<span class='total_thumbnail_count'></span>
+					<?php esc_html_e( 'images detected as resized images and are listed below', 'dlthumbs' ); ?>.
 				<?php } ?>
 			</p>
 		</div>
 
-		<table class='widefat'>
+		<table class='widefat striped'>
 			<thead>
 				<tr>
 					<th>
@@ -215,14 +216,14 @@ class DL_UI {
 
 			wp_enqueue_script(
 				'css',
-				plugins_url( 'assets/style.css', __FILE__ ),
+				plugins_url( '../assets/style.css', __FILE__ ),
 				false,
 				$version
 			);
 
 			wp_enqueue_script(
 				'js',
-				plugins_url( 'assets/dltumbs.js', __FILE__ ),
+				plugins_url( '../assets/dltumbs.js', __FILE__ ),
 				[ 'jquery' ],
 				$version,
 				true
