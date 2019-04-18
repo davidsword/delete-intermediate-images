@@ -1,11 +1,8 @@
 <?php
-// @TODO this file is too long. split up.
-
-
 defined( 'ABSPATH' ) || exit;
 
 /**
- * @TODO wire this all up & complete.
+ * @TODO
  */
 class DL_UI {
 
@@ -134,8 +131,9 @@ class DL_UI {
 			<tbody>
 				<?php
 				$id = 0;
+				$library_of_images = $this->library::get();
 				foreach ( $this->files as $afile ) {
-					$is_thumb = DL_Helpers::is_thumbnail( $afile, $this->library::get() );
+					$is_thumb = DL_Helpers::is_thumbnail( $afile, $library_of_images );
 					$file     = $afile;
 					if ( ! $is_thumb ) {
 						continue;
