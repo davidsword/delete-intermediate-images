@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 class Delete_Thumbnails {
 
 	/**
-	 * Tiger cats go!
+	 * Init class.
 	 */
 	public function __construct() {
 		$this->load();
@@ -29,15 +29,14 @@ class Delete_Thumbnails {
 	}
 
 	/**
-	 * Tiger cats go!
+	 * Tiger cats go! Fire up the UI.
 	 */
 	public function init() {
-		// fire up the interface.
 		new DL_UI();
 	}
 
 	/**
-	 *
+	 * Load in classes.
 	 *
 	 * @return void
 	 */
@@ -46,6 +45,7 @@ class Delete_Thumbnails {
 		include('inc/class-service.php');
 		include('inc/class-ui.php');
 		include('inc/class-library.php');
+		include('inc/class-file.php');
 	}
 
 }

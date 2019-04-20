@@ -64,6 +64,14 @@ Please note this is a work in progress plugin, this plugin was developed and tes
 
 You must backup your files as this plugin DELETES files permanently, you can ignore and bypass, however you should always [backup your WordPress installation](https://codex.wordpress.org/WordPress_Backups#Backing_Up_Your_WordPress_Site). It's quick and easy and saves you a lot of headache down the road.
 
+= Why is there a disgrephancy between files found, originals, and intermediate? =
+
+You may see a notice like:
+
+> Browsing: /wp-content/uploads/ **231** files were found, **47** are original images. **170** images were detected as resized images and are listed below:
+
+You'll notice that `47+170` does not equal `231`. This is not an error, it is because some files that were found were not images, these were files like .PDFs, .txt, or even .php files. In future versions of this plugin this will be simplified, not including non-image files in the total count.
+
 == Screenshots ==
 
 1. List of all resized images in uploads directory with options to select and delete

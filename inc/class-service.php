@@ -26,14 +26,23 @@ class DL_Service {
 
 	public $files_count = '';
 
+	public $wp_upload_dir = '';
 
 	public function __construct() {
-		$dir       = wp_upload_dir();
-		$this->dir = $dir['basedir'];
-		$this->url = $dir['baseurl'];
-
+		$this->dir = $this->get_upload_dir();
+		$this->url = $this->get_upload_url();
 		$this->files = $this->get_files_from_folder( $this->dir );
 		$this->files_count = count( $this->files );
+	}
+
+	static function get_upload_dir() {
+		$wp_upload_dir = wp_upload_dir();
+		return $wp_upload_dir['basedir'];
+	}
+
+	static function get_upload_url() {
+		$wp_upload_dir = wp_upload_dir();
+		return $wp_upload_dir['baseurl'];
 	}
 
     /**

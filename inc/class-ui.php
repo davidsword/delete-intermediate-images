@@ -2,26 +2,28 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * @TODO
+ * Main interface for the plugin.
+ *
+ * Creates the UX and fires off the classes needed.
  */
 class DL_UI {
 
 	/**
-	 * Will store the list of original URLs from the Media Library.
+	 * Hold the DL_Library class.
 	 *
 	 * @var array
 	 */
 	public $library = [];
 
 	/**
-	 *
+	 * Hold the DL_Service class.
 	 *
 	 * @var array
 	 */
 	public $service = [];
 
 	/**
-	 *
+	 * Init.
 	 */
 	public function __construct() {
 		$this->hook_into_wp();
@@ -35,9 +37,8 @@ class DL_UI {
 		add_action( 'admin_footer', [ $this, 'admin_scripts' ] );
 	}
 
-
     /**
-	 * Add Menu Page
+	 * Add Plugins main interface and post processing into an Admin page.
 	 *
 	 * @since 2.0
 	 */
@@ -46,7 +47,7 @@ class DL_UI {
 		$page_hook_suffix = add_management_page(
 			esc_html__( 'Delete Thumbnails', 'dlthumbs' ),
 			esc_html__( 'Delete Thumbnails', 'dlthumbs' ),
-			'manage_options', // Caps level.
+			'manage_options', // Caps level, has to be an Admin.
 			'dlthumbs',
 			[ $this, 'interface' ]
 		);
@@ -55,7 +56,7 @@ class DL_UI {
 	}
 
     /**
-	 * HTML Page
+	 * The plugins main interface.
 	 *
 	 * @since 2.0
 	 */
@@ -75,7 +76,12 @@ class DL_UI {
 				?>
 				<div class='notice notice-error'><p>
 					<?php
-					sprintf( esc_html_e( 'This plugin requires Your upload directory %s to be at least %s so PHP can edit it. The deletion of files will most likely not work. Please contact your host or website provider for assistance. Mention your %s is currently set to', 'dlthumbs' ), 'CHMOD', '<code>755</code>', 'CHMOD'); ?>: <code><?php echo $writable; ?></code>
+					sprintf(
+						esc_html_e( 'This plugin requires your upload directory %s to be at least %s so PHP can edit it. The deletion of files will most likely not work. Please contact your host or website provider for assistance. Mention your %s is currently set to', 'dlthumbs' ),
+						'CHMOD',
+						'<code>755</code>',
+						'CHMOD'
+					); ?>: <code><?php echo $writable; ?></code>
 				</p></div>
 				<?php
 			endif;
@@ -91,7 +97,6 @@ class DL_UI {
 		<?php
 	}
 
-
     /**
 	 * List all files from uploads directory.
 	 *
@@ -104,12 +109,15 @@ class DL_UI {
 				<?php esc_html_e( 'Browsing', 'dlthumbs' ); ?>:
 				<code>/<?php echo str_replace( get_home_path(), '', $this->service->dir ); ?>/</code>
 				<?php echo $this->service->files_count; ?>
-				<?php esc_html_e( 'files were found', 'dlthumbs' ); ?>.
+				<?php esc_html_e( 'files were found', 'dlthumbs' ); ?>,
+
+				<?php echo $this->library->files_count; ?>
+				<?php esc_html_e( 'are original images', 'dlthumbs' ); ?>.
 				<?php
 				if ( $this->service->files_count > 0 ) {
 					?>
 					<span class='total_thumbnail_count'></span>
-					<?php esc_html_e( 'images detected as resized images and are listed below', 'dlthumbs' ); ?>.
+					<?php esc_html_e( 'images were detected as resized images and are listed below', 'dlthumbs' ); ?>:
 					<?php
 				}
 				?>
@@ -133,26 +141,27 @@ class DL_UI {
 			<tbody>
 				<?php
 				$id = 0;
-				$library_of_images = $this->library::get();
-				foreach ( $this->service->files as $afile ) {
-					$is_thumb = DL_Helpers::is_thumbnail( $afile, $library_of_images );
+				$library_of_images = $this->library->files;
+				foreach ( $this->service->files as $file_path ) {
+					$is_thumb = DL_Helpers::is_thumbnail( $file_path, $library_of_images );
 					if ( ! $is_thumb ) {
 						continue;
 					}
 
-					$image_link = str_replace( $this->service->dir, $this->service->url, $afile );
+					$file = new DL_File( $file_path );
+
 					$id++;
 					?>
 					<tr>
 						<td>
-							&nbsp;<input id='input-<?php echo $id; ?>' type='checkbox' value='<?php echo esc_html( str_replace( $this->service->dir, '', $afile ) ); ?>' />
+							&nbsp;<input id='input-<?php echo $id; ?>' type='checkbox' value='<?php echo esc_attr( $file->get_form_value() ) ?>' />
 						</td>
 						<td>
-							<a target='_Blank' href='<?php echo esc_url( $image_link ); ?>'>View »</a>
+							<a target='_Blank' href='<?php echo esc_url( $file->get_image_link() ); ?>'>View »</a>
 						</td>
 						<td>
 							<label for='input-<?php echo $id; ?>'>
-								<?php echo esc_html( str_replace( $this->service->dir, '', $afile ) ); ?>
+								<?php echo esc_html( str_replace( $this->service->dir, '', $file->get_file_path() ) ); ?>
 							</label>
 						</td>
 					</tr>
