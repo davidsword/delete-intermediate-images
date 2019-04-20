@@ -32,11 +32,8 @@ class Delete_Thumbnails {
 	 * Tiger cats go!
 	 */
 	public function init() {
-		$library = new DL_Library();
-		$service = new DL_Service();
-
 		// fire up the interface.
-		new DL_UI( $library, $service );
+		new DL_UI();
 	}
 
 	/**

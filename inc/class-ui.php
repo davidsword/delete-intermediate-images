@@ -23,9 +23,7 @@ class DL_UI {
 	/**
 	 *
 	 */
-	public function __construct( $_library, $_service ) {
-		$this->library     = $_library;
-		$this->service     = $_service;
+	public function __construct() {
 		$this->hook_into_wp();
 	}
 
@@ -62,6 +60,10 @@ class DL_UI {
 	 * @since 2.0
 	 */
 	public function interface() {
+
+		$this->library = new DL_Library();
+		$this->service = new DL_Service();
+
 		?>
 		<div class='wrap' id='dlthumbs'>
 			<h2><?php esc_html_e( 'Delete Resized Images', 'dlthumbs' ); ?></h2>
