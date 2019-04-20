@@ -88,48 +88,67 @@ class DL_Service {
 
 	public function delete() {
 		if (
-			isset( $_POST['list'] ) &&
-			! empty( $_POST['list'] ) &&
-			'[]' !== $_POST['list']
+			! isset( $_POST['list'] ) ||
+			empty( $_POST['list'] ) ||
+			'[]' === $_POST['list']
 		) {
-			if ( check_admin_referer( 'submit' ) ) { // @TODO no.
-				$not_deleted   = [];
-				$deleted       = [];
-				$filestodelete = json_decode( str_replace( '\"', '"', $_POST['list'] ) ); // this value will be sanitized later.
+			return;
+		}
+		if ( ! check_admin_referer( 'submit' ) ) { // @TODO no.
+			return;
+		}
+		$not_deleted   = [];
+		$deleted       = [];
+		$filestodelete = json_decode( str_replace( '\"', '"', $_POST['list'] ) ); // this value will be sanitized later.
 
-				foreach ( $filestodelete as $deleteme ) {
-					$delete_file = verify_and_sanatize_path( $this->dir . $deleteme );
-					if ( $delete_file ) {
-						// CYA LATER!
-						if ( unlink( $delete_file ) ) { // yeah unlink.
-							$deleted[] = $delete_file;
-						} else {
-							$not_deleted[] = $deleteme . ' (' . esc_html__( 'could not delete', 'dlthumbs' ) . ')';
-						}
-					} else {
-						$not_deleted[] = $deleteme . ' (' . esc_html__( 'could not verify path', 'dlthumbs' ) .')';
-					}
-				}
-				if ( count( $deleted ) > 0 ) {
-					$error_class = 'notice-success is-dismissible';
-					$error_text  = count( $deleted );
-					$error_text .= esc_html_e( 'files successfully deleted.', 'dlthumbs' ); // @TODO change to print_f format
-				}
-				if ( count( $not_deleted ) > 0 ) {
-					$error_class = 'notice-error';
-					$error_text  = esc_html_e( 'Yikes, files were marked to-delete but PHP was unable to delete them.', 'dlthumbs' ); // @TODO change to print_f format
-					$error_text .= count( $not_deleted ) . implode( '<br /> - ', $not_deleted );
+		foreach ( $filestodelete as $deleteme ) {
+			$delete_file = $this->verify_and_sanatize_path( $this->dir . $deleteme );
+			if ( $delete_file ) {
+				// CYA LATER!
+				if ( unlink( $delete_file ) ) { // yeah unlink.
+					$deleted[] = $delete_file;
+				} else {
+					$not_deleted[] = $deleteme . ' (' . esc_html__( 'could not delete', 'dlthumbs' ) . ')';
 				}
 			} else {
-				$error_class = 'notice-error';
-				$error_text  = esc_html_e( 'Something went wrong with the', 'dlthumbs' );
-				$error_text .= '<code>wp_nonce_field()</code>.';
+				$not_deleted[] = $deleteme . ' (' . esc_html__( 'could not verify path', 'dlthumbs' ) .')';
 			}
-			?>
-			<div class="notice <?php echo $error_class; ?>">
-				<p><?php echo $error_text; ?></p>
-			</div>
-			<?php
+		}
+		if ( count( $deleted ) > 0 ) {
+			$error_class = 'notice-success is-dismissible';
+			$error_text  = count( $deleted );
+			$error_text .= esc_html_e( 'files successfully deleted.', 'dlthumbs' ); // @TODO change to print_f format
+		}
+		if ( count( $not_deleted ) > 0 ) {
+			$error_class = 'notice-error';
+			$error_text  = esc_html_e( 'Yikes, files were marked to-delete but PHP was unable to delete them.', 'dlthumbs' ); // @TODO change to print_f format
+			$error_text .= count( $not_deleted ) . implode( '<br /> - ', $not_deleted );
+		}
+		?>
+		<div class="notice <?php echo $error_class; ?>">
+			<p><?php echo $error_text; ?></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Ensure nothing naughty is happening. Clean out any bad behaviour.
+	 *
+	 * @param string $path the path of what should be an image.
+	 * @return clean path
+	 */
+	public function verify_and_sanatize_path( $path ) {
+		$path_with_no_funny_business = str_replace( [ '../', '..', '/.' ], '', $path );
+		// Eliminate any symbolic links or dot-dot'ery.
+		$sanitized_path = realpath( $path_with_no_funny_business );
+		// Make sure we're working in the uploads directory. Double check it.
+		$has_dir = strpos( $sanitized_path, $this->dir );
+		$starts_with_dir = $this->dir == substr($sanitized_path, 0, count( $this->dir ) );
+		if ( 0 === $has_dir && $starts_with_dir) {
+			return $path;
+		} else {
+			return false;
 		}
 	}
+
 }

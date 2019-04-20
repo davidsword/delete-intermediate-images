@@ -52,23 +52,4 @@ class DL_Helpers {
 		return str_replace( '//', '/', $str );
 	}
 
-	/**
-	 * Ensure nothing naughty is happening. Clean out any bad behaviour.
-	 *
-	 * @param string $path the path of what should be an image.
-	 * @return clean path
-	 */
-	static function verify_and_sanatize_path( $path ) {
-		$path_no_funny_business = str_replace( [ '../', '..', '/.' ], '', $path );
-		// Eliminate any symbolic links or dot-dot'ery.
-		$realpath = realpath( $path_no_funny_business );
-		// Make sure we're in the uploads directory.
-		$good = strpos( $realpath, $this->dir );
-		if ( 0 === $good ) {
-			return $path;
-		} else {
-			return false;
-		}
-	}
-
 }
