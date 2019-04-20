@@ -9,16 +9,16 @@ defined( 'ABSPATH' ) || exit;
 class DL_Service {
 
 	/**
+	 * Will hold WordPress's `basedir` value.
 	 *
-	 *
-	 * @var
+	 * @var string
 	 */
 	public $dir = '';
 
 	/**
+	 * Will hold WordPress's `baseurl` value.
 	 *
-	 *
-	 * @var
+	 * @var string
 	 */
 	public $url = '';
 
