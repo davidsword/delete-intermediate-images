@@ -99,19 +99,19 @@ class DL_Service {
 		}
 		$not_deleted   = [];
 		$deleted       = [];
-		$filestodelete = json_decode( str_replace( '\"', '"', $_POST['list'] ) ); // this value will be sanitized later.
+		$files_to_delete = json_decode( str_replace( '\"', '"', $_POST['list'] ) ); // this value will be sanitized later.
 
-		foreach ( $filestodelete as $deleteme ) {
-			$delete_file = $this->verify_and_sanatize_path( $this->dir . $deleteme );
+		foreach ( $files_to_delete as $delete_me ) {
+			$delete_file = $this->verify_and_sanitize_path( $this->dir . $delete_me );
 			if ( $delete_file ) {
 				// CYA LATER!
 				if ( unlink( $delete_file ) ) { // yeah unlink.
 					$deleted[] = $delete_file;
 				} else {
-					$not_deleted[] = $deleteme . ' (' . esc_html__( 'could not delete', 'dlthumbs' ) . ')';
+					$not_deleted[] = $delete_me . ' (' . esc_html__( 'could not delete', 'dlthumbs' ) . ')';
 				}
 			} else {
-				$not_deleted[] = $deleteme . ' (' . esc_html__( 'could not verify path', 'dlthumbs' ) .')';
+				$not_deleted[] = $delete_me . ' (' . esc_html__( 'could not verify path', 'dlthumbs' ) .')';
 			}
 		}
 		if ( count( $deleted ) > 0 ) {
@@ -137,13 +137,13 @@ class DL_Service {
 	 * @param string $path the path of what should be an image.
 	 * @return clean path
 	 */
-	public function verify_and_sanatize_path( $path ) {
+	public function verify_and_sanitize_path( $path ) {
 		$path_with_no_funny_business = str_replace( [ '../', '..', '/.' ], '', $path );
 		// Eliminate any symbolic links or dot-dot'ery.
 		$sanitized_path = realpath( $path_with_no_funny_business );
 		// Make sure we're working in the uploads directory. Double check it.
 		$has_dir = strpos( $sanitized_path, $this->dir );
-		$starts_with_dir = $this->dir == substr($sanitized_path, 0, count( $this->dir ) );
+		$starts_with_dir = $this->dir === substr($sanitized_path, 0, count( $this->dir ) );
 		if ( 0 === $has_dir && $starts_with_dir) {
 			return $path;
 		} else {
