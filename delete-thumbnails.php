@@ -21,20 +21,6 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 class Delete_Thumbnails {
 
 	/**
-	 * Will hold WordPress's `basedir` value.
-	 *
-	 * @var string
-	 */
-	private $dir = '';
-
-	/**
-	 * Will hold WordPress's `baseurl` value.
-	 *
-	 * @var string
-	 */
-	private $url = '';
-
-	/**
 	 * Tiger cats go!
 	 */
 	public function __construct() {
