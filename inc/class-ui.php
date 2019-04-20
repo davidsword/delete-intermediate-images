@@ -212,7 +212,7 @@ class DL_UI {
 		if ( 'tools_page_dlthumbs' === get_current_screen()->base ) {
 			$version = SCRIPT_DEBUG ? time() : get_plugin_data( __FILE__ )['Version'];
 
-			wp_enqueue_script(
+			wp_enqueue_style(
 				'css',
 				plugins_url( '../assets/style.css', __FILE__ ),
 				false,
