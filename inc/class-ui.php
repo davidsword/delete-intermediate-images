@@ -24,8 +24,8 @@ class DL_UI {
 	 *
 	 */
 	public function __construct( $_library, $_service ) {
-		$this->library = $_library;
-		$this->service = $_service;
+		$this->library     = $_library;
+		$this->service     = $_service;
 		$this->hook_into_wp();
 	}
 
@@ -67,10 +67,6 @@ class DL_UI {
 			<h2><?php esc_html_e( 'Delete Resized Images', 'dlthumbs' ); ?></h2>
 
 			<?php
-			// Load files in media upload dir.
-			$this->files       = $this->service->get_files_from_folder( $this->service->dir );
-			$this->files_count = count( $this->files );
-
 			// Check the dir for permissions.
 			$writable = $this->service->check_permission( $this->service->dir );
 			if ( ! $writable ) :
@@ -101,16 +97,20 @@ class DL_UI {
 	 */
 	public function dltthumbs_list_form() {
 		?>
-		<div class="notice notice-<?php echo ( 0 === $this->files_count ) ? 'error' : 'info'; ?>">
+		<div class="notice notice-<?php echo ( 0 === $this->service->files_count ) ? 'error' : 'info'; ?>">
 			<p>
 				<?php esc_html_e( 'Browsing', 'dlthumbs' ); ?>:
 				<code>/<?php echo str_replace( get_home_path(), '', $this->service->dir ); ?>/</code>
-				<?php echo $this->files_count; ?>
+				<?php echo $this->service->files_count; ?>
 				<?php esc_html_e( 'files were found', 'dlthumbs' ); ?>.
-				<?php if ( $this->files_count > 0 ) { ?>
+				<?php
+				if ( $this->service->files_count > 0 ) {
+					?>
 					<span class='total_thumbnail_count'></span>
 					<?php esc_html_e( 'images detected as resized images and are listed below', 'dlthumbs' ); ?>.
-				<?php } ?>
+					<?php
+				}
+				?>
 			</p>
 		</div>
 
@@ -132,35 +132,36 @@ class DL_UI {
 				<?php
 				$id = 0;
 				$library_of_images = $this->library::get();
-				foreach ( $this->files as $afile ) {
+				foreach ( $this->service->files as $afile ) {
 					$is_thumb = DL_Helpers::is_thumbnail( $afile, $library_of_images );
-					$file     = $afile;
 					if ( ! $is_thumb ) {
 						continue;
 					}
+
+					$image_link = str_replace( $this->service->dir, $this->service->url, $afile );
 					$id++;
 					?>
 					<tr>
 						<td>
-							&nbsp;<input id='input-<?php echo $id; ?>' type='checkbox' value='<?php echo str_replace( $this->service->dir, '', $file ); ?>' />
+							&nbsp;<input id='input-<?php echo $id; ?>' type='checkbox' value='<?php echo esc_html( str_replace( $this->service->dir, '', $afile ) ); ?>' />
 						</td>
 						<td>
-							<a target='_Blank' href='<?php echo DL_Helpers::fixslash( str_replace( $this->service->dir, $this->service->url, $file ) ); ?>'>View »</a>
+							<a target='_Blank' href='<?php echo esc_url( $image_link ); ?>'>View »</a>
 						</td>
 						<td>
 							<label for='input-<?php echo $id; ?>'>
-								<?php echo str_replace( $this->service->dir, '', $file ); ?>
+								<?php echo esc_html( str_replace( $this->service->dir, '', $afile ) ); ?>
 							</label>
 						</td>
 					</tr>
 					<?php
 				}
-				if ( 0 === $id || 0 === $this->files_count ) {
+				if ( 0 === $id || 0 === $this->service->files_count ) {
 					?>
 					<tr>
 						<td colspan=3>
 							<p id='wtfnofiles'><?php esc_html_e( 'No resized images found in', 'dlthumbs' ); ?>:<br />
-							<code><?php echo $this->service->dir; ?></code>
+							<code><?php echo esc_html( $this->service->dir ); ?></code>
 							</p>
 						</td>
 					</tr>
@@ -177,11 +178,11 @@ class DL_UI {
 			// security.
 			wp_nonce_field( 'submit' );
 
-			if ( 0 !== $id && 0 !== $this->files_count ) {
+			if ( 0 !== $id && 0 !== $this->service->files_count ) {
 				?>
 
 			<!-- the magic -->
-			<textarea name='list'></textarea>
+			<textarea name='dlthumbs_list'></textarea>
 			<p>
 				<label>
 					<input class='nag' value='' type='checkbox' name='nag1' />
@@ -190,7 +191,7 @@ class DL_UI {
 				<br />
 				<label>
 					<input class='nag' value='' type='checkbox' name='nag2' />
-					<?php esc_html_e( 'I have backed up the uploads directory before doing this', 'dlthumbs' ); ?> (<code>/<?php echo str_replace( get_home_path(), '', $this->service->dir ); ?>/</code>).
+					<?php esc_html_e( 'I have backed up the uploads directory before doing this', 'dlthumbs' ); ?> (<code>/<?php echo esc_html( str_replace( get_home_path(), '', $this->service->dir ) ); ?>/</code>).
 				</label>
 				<br />
 				<label>

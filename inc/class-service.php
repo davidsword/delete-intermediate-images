@@ -22,11 +22,18 @@ class DL_Service {
 	 */
 	public $url = '';
 
+	public $files = '';
+
+	public $files_count = '';
+
 
 	public function __construct() {
 		$dir       = wp_upload_dir();
 		$this->dir = $dir['basedir'];
 		$this->url = $dir['baseurl'];
+
+		$this->files = $this->get_files_from_folder( $this->dir );
+		$this->files_count = count( $this->files );
 	}
 
     /**
@@ -48,19 +55,19 @@ class DL_Service {
 	 *
 	 * @since 2.0
 	 *
-	 * @param string  $folder folder to retrive files from.
+	 * @param string  $folder folder to retrieve files from.
 	 * @return array of files.
 	 */
 	public function get_files_from_folder( $folder ) {
 
 		$files = [];
 
-		$files = scandir( $folder );
-		if ( false === $files) {
+		$get_files = scandir( $folder );
+		if ( false === $get_files) {
 			return "ERROR running scandir on {$folder}`";
 		}
 
-		foreach ( $files as $filename ) {
+		foreach ( $get_files as $filename ) {
 			if ( in_array( $filename, [ '.DS_Store', '.', '..', '' ], true ) ) {
 				continue; // common, get outta here.
 			}
