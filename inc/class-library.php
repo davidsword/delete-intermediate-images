@@ -1,6 +1,4 @@
 <?php
-
-
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -8,15 +6,37 @@ defined( 'ABSPATH' ) || exit;
  */
 class DL_Library {
 
-	public $files_count = '';
+	/**
+	 * An array of all files from the Media Library.
+	 *
+	 * @var array
+	 */
 	public $files = [];
 
+	/**
+	 * A count of the total number of files in the Media Library.
+	 *
+	 * @var string
+	 */
+	public $files_count = '';
+
+	/**
+	 * Init Class.
+	 */
 	public function __construct() {
 		$this->files = $this->get();
 		$this->files_count = count( $this->files );
 	}
 
+	/**
+	 * How long to store the Media Library in cache.
+	 */
 	const LIBRARY_CACHE_IN_SECONDS = 60*5;
+
+	/**
+	 * Name of the cache.
+	 */
+	const LIBRARY_CACHE_NAME = 'dlthumbs_library';
 
 	/**
 	 * Get the Media Library
@@ -25,7 +45,7 @@ class DL_Library {
 	 */
 	static function get() {
 
-		$result = wp_cache_get( 'dlthumbs_library' );
+		$result = wp_cache_get( self::LIBRARY_CACHE_NAME );
 		if ( true === $result ) {
 			return $result;
 		}
@@ -40,7 +60,9 @@ class DL_Library {
 			'numberposts'         => -1, // Watch out bigger sites, this might slow ya down.
 		];
 
-		// @TODO this needs to be paginated at some point, it won't scale.
+		/**
+		 * @TODO this needs to be paginated at some point, it won't scale.
+		 */
 		$attachments = get_posts( $args );
 		foreach ( $attachments as $post ) {
 			$type = get_post_mime_type( $post->ID );
@@ -49,7 +71,7 @@ class DL_Library {
 			}
 			$library[] = DL_Helpers::fixslash( wp_get_attachment_url( $post->ID ) );
 		}
-		wp_cache_set( 'dlthumbs_library', $library, '', self::LIBRARY_CACHE_IN_SECONDS );
+		wp_cache_set( self::LIBRARY_CACHE_NAME, $library, '', self::LIBRARY_CACHE_IN_SECONDS );
 
 		return $library;
     }

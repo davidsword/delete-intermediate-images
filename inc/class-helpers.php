@@ -1,11 +1,14 @@
 <?php
-
 defined( 'ABSPATH' ) || exit;
 
 /**
  * @TODO wire this all up & complete.
  */
 class DL_Helpers {
+
+	/**
+	 *
+	 */
 	public function __construct() {
 
 	}
@@ -19,7 +22,7 @@ class DL_Helpers {
 	 */
 	static function is_thumbnail( $file, $library ) {
 		/*
-		If it's in the media library as a main file, it's defnitantly not a thumbnail
+		If it's in the media library as a main file, it is definitely not a thumbnail
 		It could of been mistaken as one if it's source was a downloaded thumbnail from
 		Another WordPress blog
 		*/
@@ -27,7 +30,7 @@ class DL_Helpers {
 			return false;
 		}
 
-		// If it has the thumbnail suffix, lets concider it.
+		// If it has the thumbnail suffix, lets consider it.
 		preg_match( '"-([0-9]*x[0-9]*)."', $file, $matches );
 		if ( count( $matches ) > 0 ) {
 			return true;

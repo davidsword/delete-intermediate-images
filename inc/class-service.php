@@ -1,6 +1,4 @@
 <?php
-
-
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -22,24 +20,42 @@ class DL_Service {
 	 */
 	public $url = '';
 
+	/**
+	 *
+	 */
 	public $files = '';
 
+	/**
+	 *
+	 */
 	public $files_count = '';
 
+	/**
+	 *
+	 */
 	public $wp_upload_dir = '';
 
+	/**
+	 *
+	 */
 	public function __construct() {
-		$this->dir = $this->get_upload_dir();
-		$this->url = $this->get_upload_url();
-		$this->files = $this->get_files_from_folder( $this->dir );
+		$this->dir         = $this->get_upload_dir();
+		$this->url         = $this->get_upload_url();
+		$this->files       = $this->get_files_from_folder( $this->dir );
 		$this->files_count = count( $this->files );
 	}
 
+	/**
+	 *
+	 */
 	static function get_upload_dir() {
 		$wp_upload_dir = wp_upload_dir();
 		return $wp_upload_dir['basedir'];
 	}
 
+	/**
+	 *
+	 */
 	static function get_upload_url() {
 		$wp_upload_dir = wp_upload_dir();
 		return $wp_upload_dir['baseurl'];
@@ -51,7 +67,7 @@ class DL_Service {
 	 * @param  string $folder path to the folder to check permissions on.
 	 * @return boolean true if it's writeable, false if not
 	 */
-	public function check_permission( $folder ) {
+	public function check_permission() {
 		$check = substr( sprintf( '%o', fileperms( $this->dir ) ), -4 );
 		return ( $check >= 755 );
     }
@@ -76,31 +92,30 @@ class DL_Service {
 			return "ERROR running scandir on {$folder}`";
 		}
 
-		foreach ( $get_files as $filename ) {
-			if ( in_array( $filename, [ '.DS_Store', '.', '..', '' ], true ) ) {
+		foreach ( $get_files as $file_name ) {
+			if ( in_array( $file_name, [ '.DS_Store', '.', '..', '' ], true ) ) {
 				continue; // common, get outta here.
 			}
 
 			// For directories, lets repeat ourselves, find files within folders. Inception style.
-			$maybe_dir = DL_Helpers::fixslash( $folder . '/' . $filename . '/' );
+			$maybe_dir = DL_Helpers::fixslash( $folder . '/' . $file_name . '/' );
 			if ( is_dir( $maybe_dir ) ) {
-				$subfiles = $this->get_files_from_folder( $maybe_dir );
-				if ( is_array( $subfiles ) && count( $subfiles ) > 0 ) {
-					$files = array_merge( $files, $subfiles );
+				$sub_files = $this->get_files_from_folder( $maybe_dir );
+				if ( is_array( $sub_files ) && count( $sub_files ) > 0 ) {
+					$files = array_merge( $files, $sub_files );
 				}
 			} else { // it's a file!
-				$files[] = DL_Helpers::fixslash( $folder . '/' . $filename );
+				$files[] = DL_Helpers::fixslash( $folder . '/' . $file_name );
 			}
 		}
 		return $files;
 	}
 
+	/**
+	 *
+	 */
 	public function delete() {
-		if (
-			! isset( $_POST['list'] ) ||
-			empty( $_POST['list'] ) ||
-			'[]' === $_POST['list']
-		) {
+		if ( ! isset( $_POST['list'] ) || empty( $_POST['list'] ) || '[]' === $_POST['list'] ) {
 			return;
 		}
 		if ( ! check_admin_referer( 'submit' ) ) { // @TODO no.
@@ -113,8 +128,7 @@ class DL_Service {
 		foreach ( $files_to_delete as $delete_me ) {
 			$delete_file = $this->verify_and_sanitize_path( $this->dir . $delete_me );
 			if ( $delete_file ) {
-				// CYA LATER!
-				if ( unlink( $delete_file ) ) { // yeah unlink.
+				if ( unlink( $delete_file ) ) { // CYA LATER!
 					$deleted[] = $delete_file;
 				} else {
 					$not_deleted[] = $delete_me . ' (' . esc_html__( 'could not delete', 'dlthumbs' ) . ')';
@@ -130,12 +144,12 @@ class DL_Service {
 		}
 		if ( count( $not_deleted ) > 0 ) {
 			$error_class = 'notice-error';
-			$error_text  = esc_html_e( 'Yikes, files were marked to-delete but PHP was unable to delete them.', 'dlthumbs' ); // @TODO change to print_f format
+			$error_text  = esc_html_e( 'Yikes, files were marked to-delete but PHP was unable to delete them.', 'dlthumbs' ); // @TODO change to print_f format.
 			$error_text .= count( $not_deleted ) . implode( '<br /> - ', $not_deleted );
 		}
 		?>
-		<div class="notice <?php echo $error_class; ?>">
-			<p><?php echo $error_text; ?></p>
+		<div class="notice <?php echo esc_html( $error_class ); ?>">
+			<p><?php echo esc_html( $error_text ); ?></p>
 		</div>
 		<?php
 	}

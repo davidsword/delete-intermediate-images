@@ -16,7 +16,7 @@
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
 /**
- * Main and only Class for plugin.
+ * Main and only class for plugin.
  */
 class Delete_Thumbnails {
 
