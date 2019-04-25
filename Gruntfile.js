@@ -9,7 +9,7 @@ module.exports = function( grunt ) {
 
 		addtextdomain: {
 			options: {
-				textdomain: 'psdn',
+				textdomain: 'dlthumbs',
 			},
 			update_all_domains: {
 				options: {
@@ -31,9 +31,9 @@ module.exports = function( grunt ) {
 			target: {
 				options: {
 					domainPath: '/languages',
-					exclude: [ '\.git/*', 'bin/*', 'node_modules/*', 'tests/*' ],
-					mainFile: 'psdn.php',
-					potFilename: 'psdn.pot',
+					exclude: [ '\.git/*', 'bin/*', 'node_modules/*', 'vendor/*', 'assets/*', 'tests/*' ],
+					mainFile: 'dlthumbs.php',
+					potFilename: 'dlthumbs.pot',
 					potHeaders: {
 						poedit: true,
 						'x-poedit-keywordslist': true
