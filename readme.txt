@@ -140,3 +140,21 @@ You'll notice that `47+170` does not equal `231`. This is not an error, it is be
 
 = 1.0.0 =
 * all clear, blue sky
+
+== Contributors ==
+
+Install required PHPCS by running:
+
+* `$ composer install`
+
+The following grunt tasks are available during development:
+
+* `$ grunt i18n` (containing `addtextdomain` and `makepot`)
+* `$ grunt readme` (containing `wp_readme_to_markdown`)
+* `$ grunt` run the two commands above
+
+For tests (on a VVV setup):
+
+* `$ cd /path/to/delete-thumbnails/`
+* `$ ./bin/install-wp-tests.sh phpunit root root`
+* `$ phpunit`
