@@ -2,7 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * @TODO wire this all up & complete.
+ * Media Library Class.
  */
 class DL_Library {
 
@@ -57,11 +57,13 @@ class DL_Library {
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => false,
 			'post_type'           => 'attachment',
-			'numberposts'         => -1, // Watch out bigger sites, this might slow ya down.
+			'numberposts'         => -1, // will not scale. Not preferment.
 		];
 
 		/**
-		 * @TODO this needs to be paginated at some point, it won't scale.
+		 * @TODO this needs to be paginated at some point, it won't scale!
+		 *       We can't be storing thousands of images in this.
+		 *       Need to refactor all logic, do some AJAX magic instead.
 		 */
 		$attachments = get_posts( $args );
 		foreach ( $attachments as $post ) {

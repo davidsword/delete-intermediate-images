@@ -79,15 +79,16 @@ You'll notice that `47+170` does not equal `231`. This is not an error, it is be
 
 == Changelog ==
 
-= 2.3.0 =
+= 3.0.0 =
 * April, 2019
-* readme changes (capital P dangit!)
+* added security improvements throughout
+* change readme (capital P dangit!)
 * added `if !defined ABSPATH` security
-* changed `init` and class firing
-* changed version numbering logic
-* improved security
-* linted all code to WPCS
-* using `scandir()` instead of `readdir( opendir() )`
+* change `init` and class firing
+* change version numbering logic
+* linted all code to WPCS/VIPCS
+* change to use `scandir()` instead of `readdir( opendir() )`
+* add tests
 
 = 2.2 =
 * July 6, 2017
@@ -118,6 +119,9 @@ You'll notice that `47+170` does not equal `231`. This is not an error, it is be
 
 
 == Upgrade Notice ==
+
+= 3.0.0 =
+*
 
 = 2.1 =
 * all clear, blue sky

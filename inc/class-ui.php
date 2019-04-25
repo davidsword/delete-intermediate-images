@@ -86,10 +86,6 @@ class DL_UI {
 				<?php
 			endif;
 
-			// Form submit, run deletion.
-			// @TODO why is this inline, can't we hook this elsewhere?
-			$this->service->delete();
-
 			// show thumbnails.
 			$this->dltthumbs_list_form();
 			?>
@@ -186,8 +182,8 @@ class DL_UI {
 
 		<form action="" method="POST">
 			<?php
-			// security.
-			wp_nonce_field( 'submit' );
+			// prevent csrf attacks.
+			wp_nonce_field( 'dlthumbs_delete_form', '_wpnonce_dlthumbs' );
 
 			if ( 0 !== $id && 0 !== $this->service->files_count ) {
 				?>

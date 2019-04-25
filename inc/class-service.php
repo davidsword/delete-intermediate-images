@@ -2,7 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * @TODO wire this all up & complete.
+ * File service for storing, reading, and deleting `/wp-content/uploads/*` files.
  */
 class DL_Service {
 
@@ -21,24 +21,32 @@ class DL_Service {
 	public $url = '';
 
 	/**
+	 * Houses a list of all files found in the `$dir`.
 	 *
+	 * @var array
 	 */
 	public $files = '';
 
 	/**
+	 * The total number of giles in `$files`
 	 *
+	 * @var int
 	 */
 	public $files_count = '';
 
 	/**
-	 *
-	 */
-	public $wp_upload_dir = '';
-
-	/**
-	 *
+	 * Startup.
 	 */
 	public function __construct() {
+
+		// load the vars for this class.
+		$this->load_vars();
+
+		// this class is only used above the UI, so our listener can sit here.
+		$this->delete_listener();
+	}
+
+	function load_vars() {
 		$this->dir         = $this->get_upload_dir();
 		$this->url         = $this->get_upload_url();
 		$this->files       = $this->get_files_from_folder( $this->dir );
@@ -46,7 +54,9 @@ class DL_Service {
 	}
 
 	/**
+	 * A quick method to retrieve the `basedir`.
 	 *
+	 * @return string basedir path (ie `/var/www/public_html/wordpress/wp-content/uploads/`)
 	 */
 	static function get_upload_dir() {
 		$wp_upload_dir = wp_upload_dir();
@@ -54,7 +64,9 @@ class DL_Service {
 	}
 
 	/**
+	 * A quick method to retrieve the `baseurl`.
 	 *
+	 * @return string baseurl URL (ie `https://example.com/wp-content/uploads/`)
 	 */
 	static function get_upload_url() {
 		$wp_upload_dir = wp_upload_dir();
@@ -112,18 +124,24 @@ class DL_Service {
 	}
 
 	/**
+	 * Listener for deleting requested images.
 	 *
+	 * Only valid images will be deleted.
 	 */
-	public function delete() {
-		if ( ! isset( $_POST['list'] ) || empty( $_POST['list'] ) || '[]' === $_POST['list'] ) {
+	public function delete_listener() {
+		if ( ! isset( $_POST['dlthumbs_list'] ) || empty( $_POST['dlthumbs_list'] ) || '[]' === $_POST['dlthumbs_list'] ) {
 			return;
 		}
-		if ( ! check_admin_referer( 'submit' ) ) { // @TODO no.
+
+		// Check for nonce. No CSRF here.
+		if ( ! isset( $_POST['_wpnonce_dlthumbs'] ) || ! wp_verify_nonce( $_POST['_wpnonce_dlthumbs'], 'dlthumbs_delete_form' ) ) {
 			return;
 		}
+
 		$not_deleted   = [];
 		$deleted       = [];
-		$files_to_delete = json_decode( str_replace( '\"', '"', $_POST['list'] ) ); // this value will be sanitized later.
+		// this value will be sanitized as it's parsed, hang tight.
+		$files_to_delete = json_decode( str_replace( '\"', '"', $_POST['dlthumbs_list'] ) );
 
 		foreach ( $files_to_delete as $delete_me ) {
 			$delete_file = $this->verify_and_sanitize_path( $this->dir . $delete_me );
@@ -138,27 +156,30 @@ class DL_Service {
 			}
 		}
 		if ( count( $deleted ) > 0 ) {
-			$error_class = 'notice-success is-dismissible';
-			$error_text  = count( $deleted );
-			$error_text .= esc_html_e( 'files successfully deleted.', 'dlthumbs' ); // @TODO change to print_f format
+			$notice_class = 'notice-success is-dismissible';
+			$notice_text  = count( $deleted ) . " ";
+			$notice_text .= esc_html__( 'files successfully deleted.', 'dlthumbs' ); // @TODO change to print_f format
 		}
 		if ( count( $not_deleted ) > 0 ) {
-			$error_class = 'notice-error';
-			$error_text  = esc_html_e( 'Yikes, files were marked to-delete but PHP was unable to delete them.', 'dlthumbs' ); // @TODO change to print_f format.
-			$error_text .= count( $not_deleted ) . implode( '<br /> - ', $not_deleted );
+			$notice_class = 'notice-error';
+			$notice_text  = esc_html__( 'Yikes, files were marked to-delete but PHP was unable to delete them.', 'dlthumbs' ); // @TODO change to print_f format.
+			$notice_text .= count( $not_deleted ) . implode( '<br /> - ', $not_deleted );
 		}
 		?>
-		<div class="notice <?php echo esc_html( $error_class ); ?>">
-			<p><?php echo esc_html( $error_text ); ?></p>
+		<div class="notice <?php echo esc_html( $notice_class ); ?>">
+			<p><?php echo esc_html( $notice_text ); ?></p>
 		</div>
 		<?php
+
+		// reload our values for the ui.
+		$this->load_vars();
 	}
 
 	/**
 	 * Ensure nothing naughty is happening. Clean out any bad behaviour.
 	 *
 	 * @param string $path the path of what should be an image.
-	 * @return clean path
+	 * @return string clean path
 	 */
 	public function verify_and_sanitize_path( $path ) {
 		$path_with_no_funny_business = str_replace( [ '../', '..', '/.' ], '', $path );
@@ -166,7 +187,7 @@ class DL_Service {
 		$sanitized_path = realpath( $path_with_no_funny_business );
 		// Make sure we're working in the uploads directory. Double check it.
 		$has_dir = strpos( $sanitized_path, $this->dir );
-		$starts_with_dir = $this->dir === substr($sanitized_path, 0, count( $this->dir ) );
+		$starts_with_dir = $this->dir === substr($sanitized_path, 0, strlen( $this->dir ) );
 		if ( 0 === $has_dir && $starts_with_dir) {
 			return $path;
 		} else {
