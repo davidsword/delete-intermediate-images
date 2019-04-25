@@ -1,4 +1,11 @@
 <?php
+/**
+ * Class for the interface.
+ *
+ * @package delete-thumbnails
+ */
+
+declare( strict_types=1 );
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -37,7 +44,7 @@ class DL_UI {
 		add_action( 'admin_footer', [ $this, 'admin_scripts' ] );
 	}
 
-    /**
+	/**
 	 * Add Plugins main interface and post processing into an Admin page.
 	 *
 	 * @since 2.0
@@ -55,7 +62,7 @@ class DL_UI {
 
 	}
 
-    /**
+	/**
 	 * The plugins main interface.
 	 *
 	 * @since 2.0
@@ -87,18 +94,18 @@ class DL_UI {
 			endif;
 
 			// show thumbnails.
-			$this->dltthumbs_list_form();
+			$this->list_form();
 			?>
 		</div>
 		<?php
 	}
 
-    /**
+	/**
 	 * List all files from uploads directory.
 	 *
 	 * @since 2.0
 	 */
-	public function dltthumbs_list_form() {
+	public function list_form() {
 		?>
 		<div class="notice notice-<?php echo ( 0 === $this->service->files_count ) ? 'error' : 'info'; ?>">
 			<p>
@@ -214,7 +221,7 @@ class DL_UI {
 	}
 
 	/**
-	 * Add Resources
+	 * Add Resources for the UI page.
 	 */
 	public function admin_scripts() {
 		if ( 'tools_page_dlthumbs' === get_current_screen()->base ) {

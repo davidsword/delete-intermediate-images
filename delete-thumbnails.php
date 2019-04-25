@@ -13,7 +13,9 @@
  * @package delete-thumbnails
  */
 
-defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
+declare( strict_types=1 );
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Main and only class for plugin.
@@ -41,14 +43,14 @@ class Delete_Thumbnails {
 	 * @return void
 	 */
 	public function load() {
-		include('inc/class-helpers.php');
-		include('inc/class-service.php');
-		include('inc/class-ui.php');
-		include('inc/class-library.php');
-		include('inc/class-file.php');
+		include 'inc/class-helpers.php';
+		include 'inc/class-service.php';
+		include 'inc/class-ui.php';
+		include 'inc/class-library.php';
+		include 'inc/class-file.php';
 	}
 
 }
 
-// Self load.
+// 🚀.
 new Delete_Thumbnails();

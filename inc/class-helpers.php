@@ -2,16 +2,9 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * @TODO wire this all up & complete.
+ * Helpers for the plugin.
  */
 class DL_Helpers {
-
-	/**
-	 *
-	 */
-	public function __construct() {
-
-	}
 
 	/**
 	 * Determine if a file is a thumbnail or not
