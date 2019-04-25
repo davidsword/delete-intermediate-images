@@ -149,7 +149,7 @@ Install required PHPCS by running:
 
 * `$ composer install`
 
-The following grunt tasks are available during development:
+After running `$ npm install` the following Grunt tasks are available during development:
 
 * `$ grunt i18n` (containing `addtextdomain` and `makepot`)
 * `$ grunt readme` (containing `wp_readme_to_markdown`)

@@ -18,7 +18,7 @@ Find and delete thumbnails & intermediate images from your Media Library.
 * 🙅🏼 Deleting is **permanent.** There's no undo. Be careful!
 * ⚙ You can use [this plugin](http://wordpress.org/plugins/regenerate-thumbnails/) to regenerate your Media Library after (as Wordpress will need the default sizes)
 * 🍺 This was a **re-written plugin**, the bad reviews were correct for the old versions, but not this current version. If you experience any issues, please open a [support request](https://wordpress.org/support/plugin/delete-thumbnails) or [github issue](https://github.com/davidsword/delete-thumbnails/issues), I'm happy to help fix any issues and help plugin grow.
-* 🙏 Contributors: please do! Looking forward to your [PRs](https://github.com/davidsword/delete-thumbnails/pulls)!
+* 🙏 Contributor guidelines at bottom of readme! Looking forward to your PRs!
 
 Read More:
 
@@ -147,7 +147,7 @@ Install required PHPCS by running:
 
 * `$ composer install`
 
-The following grunt tasks are available during development:
+After running `$ npm install` the following Grunt tasks are available during development:
 
 * `$ grunt i18n` (containing `addtextdomain` and `makepot`)
 * `$ grunt readme` (containing `wp_readme_to_markdown`)
@@ -158,3 +158,5 @@ For tests (on a VVV setup):
 * `$ cd /path/to/delete-thumbnails/`
 * `$ ./bin/install-wp-tests.sh phpunit root root`
 * `$ phpunit`
+
+Create and open PRs, flag me for review!
